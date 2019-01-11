@@ -18,23 +18,23 @@ class Api::V1::EmployeesController < ApplicationController
 
   # GET api/v1/employees/:id
   def show
-    @employee = Employee.find(params(:id))
+    @employee = Employee.find(params[:id])
   end
 
   # PUT api/v1/employees/:id/resign
   def resign
-    emp = Employee.find(params(:id))
-    if emp.update!(resigned: true) && emp.reportees.present?
-      emp.reportees.update_all(reporter_id: emp.reporter_id )
+    emp = Employee.find(params[:id])
+    if emp.update!(resigned: true) 
+      emp.reportees.update_all(reporter_id: emp.reporter_id ) if emp.reportees.present?
       render json: { message: "Employee resigned successfully"} , status: :ok
     end
   end
 
   # GET api/v1/employees/:id/reporters_hierarchy
   def reporters_hierarchy
-    emp = Employee.find(arams(:id))
-    @ancestors = Employee.where(role_id: emp.role.ancestor_ids)
-    render json: { supervisor: @supervisor, reportees: @reportees }, status: :ok
+    emp = Employee.find(params[:id])
+    @employees = Employee.where(role_id: emp.role.ancestor_ids)
+    render 'index', status: :ok
   end
 
   private
